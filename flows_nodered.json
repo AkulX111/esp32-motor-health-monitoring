@@ -1,0 +1,313 @@
+[
+    {
+        "id": "b0ad227b4d384e37",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5b4fbd779c74ea9a",
+        "type": "mqtt in",
+        "z": "b0ad227b4d384e37",
+        "name": "",
+        "topic": "motor/temp",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "5f1839e857d7b07d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "3b10aeb2f6989454"
+            ]
+        ]
+    },
+    {
+        "id": "3b10aeb2f6989454",
+        "type": "function",
+        "z": "b0ad227b4d384e37",
+        "name": "Temp store",
+        "func": "flow.set(\"temp\",msg.payload);\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a5c2e6f865e384f1",
+        "type": "mqtt in",
+        "z": "b0ad227b4d384e37",
+        "name": "",
+        "topic": "motor/vibration",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "86e17f6be5057229",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 240,
+        "wires": [
+            [
+                "4fa051a4a51198df",
+                "ef3e946a2c52330d"
+            ]
+        ]
+    },
+    {
+        "id": "425bb7d92a1a2f69",
+        "type": "mqtt in",
+        "z": "b0ad227b4d384e37",
+        "name": "",
+        "topic": "motor/status",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "4b087c66b1b4807a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 320,
+        "wires": [
+            [
+                "674eaf72fe9c81ca"
+            ]
+        ]
+    },
+    {
+        "id": "4fa051a4a51198df",
+        "type": "function",
+        "z": "b0ad227b4d384e37",
+        "name": "vibration store",
+        "func": "flow.set(\"vibration\",msg.payload);\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "674eaf72fe9c81ca",
+        "type": "function",
+        "z": "b0ad227b4d384e37",
+        "name": "Combine all + status",
+        "func": "let temp = flow.get(\"temp\");\nlet vibration = flow.get(\"vibration\");\nlet status = msg.payload;\n\nmsg.payload = [\n    new Date().toLocaleString(),\n    temp,\n    vibration,\n    status\n];\n\n//delete msg.topic;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 320,
+        "wires": [
+            [
+                "b244fb9bfa714668",
+                "f3be0cc2bac8b0e0",
+                "7218cecb249b5ec4"
+            ]
+        ]
+    },
+    {
+        "id": "f3be0cc2bac8b0e0",
+        "type": "GSheet",
+        "z": "b0ad227b4d384e37",
+        "creds": "71857065454f8d96",
+        "method": "append",
+        "action": "",
+        "sheet": "1_kaSzFmIBosIrErN92X0OqsnpDzaypVtkO_UUSfUSjc",
+        "cells": "A1:D1",
+        "flatten": false,
+        "name": "Motor sheet",
+        "x": 750,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b244fb9bfa714668",
+        "type": "debug",
+        "z": "b0ad227b4d384e37",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "ef3e946a2c52330d",
+        "type": "debug",
+        "z": "b0ad227b4d384e37",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "7218cecb249b5ec4",
+        "type": "mongodb out",
+        "z": "b0ad227b4d384e37",
+        "mongodb": "4923becab3aa67b1",
+        "name": "",
+        "collection": "motor_data",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 800,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "5f1839e857d7b07d",
+        "type": "mqtt-broker",
+        "name": "happy",
+        "broker": "10.246.24.151",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "86e17f6be5057229",
+        "type": "mqtt-broker",
+        "name": "happy",
+        "broker": "10.246.24.151",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4b087c66b1b4807a",
+        "type": "mqtt-broker",
+        "name": "happy",
+        "broker": "10.246.24.151",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "71857065454f8d96",
+        "type": "gauth",
+        "name": "node-red-writer@brave-airship-467609-s7.iam.gserviceaccount.com"
+    },
+    {
+        "id": "4923becab3aa67b1",
+        "type": "mongodb",
+        "hostname": "127.0.0.1",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": 27017,
+        "db": "motor_monitoring",
+        "name": ""
+    },
+    {
+        "id": "90730df1be25151f",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-google-sheets": "1.1.2",
+            "node-red-node-mongodb": "0.2.5"
+        }
+    }
+]
